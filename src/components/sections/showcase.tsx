@@ -1,24 +1,21 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { SectionHead } from "@/components/section-head";
+import { useRef, useState } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValueEvent,
+  type MotionValue,
+} from "framer-motion";
 import { Reveal } from "@/components/reveal";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-type Tab = {
-  id: string;
-  label: string;
-  headline: string;
-  blurb: string;
-  panel: React.ReactNode;
-};
-
-// Tasteful mock UI panels — no stock photos, looks like real product surfaces.
+/* ---------- mock UI panels (no stock photos) ---------- */
 function CloudPanel() {
   return (
-    <div className="flex h-full flex-col gap-3 p-6">
+    <div className="flex h-full flex-col gap-3 p-6 sm:p-8">
       <div className="flex items-center gap-2 text-xs text-soft">
         <span className="h-2 w-2 rounded-full bg-accent animate-pulse-glow" />
         deploy · us-east-1 · healthy
@@ -28,27 +25,32 @@ function CloudPanel() {
         { n: "worker-pool", v: "auto", w: "68%" },
         { n: "postgres-primary", v: "12ms", w: "45%" },
       ].map((r) => (
-        <div key={r.n} className="rounded-xl border border-[color:var(--hairline)] bg-[color:var(--surface-tint)] p-3">
+        <div
+          key={r.n}
+          className="rounded-xl border border-[color:var(--hairline)] bg-[color:var(--surface-tint)] p-3"
+        >
           <div className="flex justify-between text-sm">
             <span className="font-medium">{r.n}</span>
             <span className="text-accent">{r.v}</span>
           </div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[color:var(--hairline)]">
-            <div className="h-full rounded-full bg-accent/70" style={{ width: r.w }} />
+            <div
+              className="h-full rounded-full bg-accent/70"
+              style={{ width: r.w }}
+            />
           </div>
         </div>
       ))}
     </div>
   );
 }
-
 function MobilePanel() {
   return (
     <div className="flex h-full items-center justify-center gap-4 p-6">
       {[0, 1].map((i) => (
         <div
           key={i}
-          className="h-full w-28 overflow-hidden rounded-[1.6rem] border border-[color:var(--hairline-strong)] bg-[color:var(--surface-tint)] p-2 sm:w-32"
+          className="h-[80%] w-28 overflow-hidden rounded-[1.6rem] border border-[color:var(--hairline-strong)] bg-[color:var(--surface-tint)] p-2 sm:w-32"
           style={{ transform: i === 0 ? "rotate(-4deg)" : "rotate(4deg)" }}
         >
           <div className="mx-auto mb-2 h-1 w-8 rounded-full bg-[color:var(--hairline)]" />
@@ -63,27 +65,45 @@ function MobilePanel() {
     </div>
   );
 }
-
+function WebPanel() {
+  return (
+    <div className="flex h-full flex-col p-6 sm:p-8">
+      <div className="mb-3 flex gap-1.5">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className="h-2.5 w-2.5 rounded-full bg-[color:var(--hairline-strong)]"
+          />
+        ))}
+      </div>
+      <div className="flex-1 rounded-xl border border-[color:var(--hairline)] bg-[color:var(--surface-tint)] p-4">
+        <div className="h-3 w-1/3 rounded bg-accent/60" />
+        <div className="mt-3 h-8 w-2/3 rounded bg-[color:var(--hairline-strong)]" />
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-14 rounded-lg bg-[color:var(--surface)] shadow-[var(--shadow-soft)]"
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 function AiPanel() {
   return (
-    <div className="flex h-full flex-col gap-3 p-6 font-mono text-xs">
+    <div className="flex h-full flex-col gap-3 p-6 font-mono text-xs sm:p-8">
       <div className="rounded-xl border border-[color:var(--hairline)] bg-[color:var(--surface-tint)] p-3">
         <span className="text-soft">agent.run(</span>
         <span className="text-accent">&quot;analyze churn&quot;</span>
         <span className="text-soft">)</span>
       </div>
       {["→ querying warehouse", "→ ranking 3 cohorts", "→ drafting plan"].map(
-        (l, i) => (
-          <motion.div
-            key={l}
-            initial={{ opacity: 0, x: -8 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 + i * 0.15, duration: 0.5, ease }}
-            className="pl-2 text-soft"
-          >
+        (l) => (
+          <div key={l} className="pl-2 text-soft">
             {l}
-          </motion.div>
+          </div>
         )
       )}
       <div className="mt-auto rounded-xl border border-accent/30 bg-accent/5 p-3 text-[color:var(--text)]">
@@ -93,31 +113,11 @@ function AiPanel() {
   );
 }
 
-function WebPanel() {
-  return (
-    <div className="flex h-full flex-col p-6">
-      <div className="mb-3 flex gap-1.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--hairline-strong)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--hairline-strong)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--hairline-strong)]" />
-      </div>
-      <div className="flex-1 rounded-xl border border-[color:var(--hairline)] bg-[color:var(--surface-tint)] p-4">
-        <div className="h-3 w-1/3 rounded bg-accent/60" />
-        <div className="mt-3 h-8 w-2/3 rounded bg-[color:var(--hairline-strong)]" />
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="h-14 rounded-lg bg-[color:var(--surface)] shadow-[var(--shadow-soft)]" />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const tabs: Tab[] = [
+const slides = [
   {
     id: "cloud",
-    label: "Cloud",
+    n: "01",
+    label: "Cloud & Infrastructure",
     headline: "Infrastructure that holds under load",
     blurb:
       "Auto-scaling, observability, and CI/CD wired in from day one. Ship without 3am pages.",
@@ -125,7 +125,8 @@ const tabs: Tab[] = [
   },
   {
     id: "mobile",
-    label: "Mobile",
+    n: "02",
+    label: "Mobile Development",
     headline: "Native-feel apps, faster",
     blurb:
       "Flutter and React Native builds that feel hand-crafted on both platforms.",
@@ -133,7 +134,8 @@ const tabs: Tab[] = [
   },
   {
     id: "web",
-    label: "Web",
+    n: "03",
+    label: "Web Development",
     headline: "Web that feels expensive",
     blurb:
       "Animated, accessible, fast. The kind of site that makes a brand look serious.",
@@ -141,7 +143,8 @@ const tabs: Tab[] = [
   },
   {
     id: "ai",
-    label: "Agentic AI",
+    n: "04",
+    label: "Agentic AI / Gen AI",
     headline: "Agents wired into your product",
     blurb:
       "RAG pipelines and autonomous agents that do real work, not demos.",
@@ -149,86 +152,149 @@ const tabs: Tab[] = [
   },
 ];
 
-export function Showcase() {
-  const [active, setActive] = useState(0);
-  const tab = tabs[active];
+/* ---------- one scroll-driven slide ---------- */
+function Slide({
+  slide,
+  index,
+  total,
+  progress,
+}: {
+  slide: (typeof slides)[number];
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+}) {
+  // each slide owns a window of scroll progress
+  const seg = 1 / total;
+  const start = index * seg;
+  const end = start + seg;
+  // fade/slide in over first 35% of its window, out over last 35%
+  const opacity = useTransform(
+    progress,
+    [start, start + seg * 0.3, end - seg * 0.3, end],
+    [0, 1, 1, 0]
+  );
+  const y = useTransform(
+    progress,
+    [start, start + seg * 0.3, end - seg * 0.3, end],
+    [60, 0, 0, -60]
+  );
+  const scale = useTransform(
+    progress,
+    [start, start + seg * 0.3, end - seg * 0.3, end],
+    [0.96, 1, 1, 0.96]
+  );
 
   return (
-    <section className="px-6 py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl">
-        <SectionHead
-          align="center"
-          eyebrow="Capabilities"
-          title={
-            <>
-              See it <span className="italic text-accent">in motion</span>.
-            </>
-          }
-        />
+    <motion.div
+      style={{ opacity, y, scale }}
+      className="absolute inset-0 grid grid-cols-1 items-center gap-6 lg:grid-cols-12"
+    >
+      {/* text */}
+      <div className="lg:col-span-5">
+        <span className="font-display text-sm text-accent">{slide.n}</span>
+        <h3 className="mt-3 font-display text-3xl font-normal sm:text-4xl lg:text-5xl">
+          {slide.headline}
+        </h3>
+        <p className="mt-4 max-w-md text-soft">{slide.blurb}</p>
+        <span className="eyebrow mt-6">{slide.label}</span>
+      </div>
+      {/* panel */}
+      <div className="card h-72 overflow-hidden sm:h-80 lg:col-span-7 lg:h-[26rem]">
+        {slide.panel}
+      </div>
+    </motion.div>
+  );
+}
 
-        {/* tab bar */}
-        <Reveal delay={0.08}>
-          <div className="mx-auto mt-10 flex max-w-2xl flex-wrap items-center justify-center gap-1 rounded-full border border-[color:var(--hairline)] bg-[color:var(--surface)] p-1.5 shadow-[var(--shadow-soft)]">
-            {tabs.map((t, i) => (
-              <button
-                key={t.id}
-                onClick={() => setActive(i)}
-                className="relative rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300"
-              >
-                {active === i && (
-                  <motion.span
-                    layoutId="tab-pill"
-                    className="absolute inset-0 rounded-full bg-accent"
-                    transition={{ duration: 0.5, ease }}
-                  />
-                )}
-                <span
-                  className={`relative z-10 ${
-                    active === i ? "text-ink-950" : "text-soft"
-                  }`}
-                >
-                  {t.label}
+export function Showcase() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end end"],
+  });
+  const [active, setActive] = useState(0);
+
+  useMotionValueEvent(scrollYProgress, "change", (v) => {
+    const i = Math.min(slides.length - 1, Math.floor(v * slides.length));
+    if (i !== active) setActive(i);
+  });
+
+  // progress rail fill
+  const railFill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+
+  return (
+    <section id="capabilities">
+      {/* tall scroll track — height = (slides) * 100vh drives the pin duration */}
+      <div ref={ref} className="relative" style={{ height: `${slides.length * 100}vh` }}>
+        {/* sticky stage */}
+        <div className="sticky top-0 flex h-[100dvh] items-center overflow-hidden px-6">
+          <div className="mx-auto w-full max-w-6xl">
+            {/* header + rail */}
+            <div className="mb-10 flex items-end justify-between gap-6">
+              <div>
+                <span className="eyebrow mb-4">Capabilities</span>
+                <h2 className="display text-4xl font-light sm:text-5xl">
+                  See it <span className="italic text-accent">in motion</span>.
+                </h2>
+              </div>
+              {/* numbered progress rail (desktop) */}
+              <div className="hidden items-center gap-4 sm:flex">
+                <span className="font-display text-sm text-soft">
+                  {String(active + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
                 </span>
-              </button>
-            ))}
-          </div>
-        </Reveal>
+                <div className="relative h-24 w-0.5 overflow-hidden rounded-full bg-[color:var(--hairline)]">
+                  <motion.div
+                    style={{ height: railFill }}
+                    className="absolute left-0 top-0 w-full rounded-full bg-accent"
+                  />
+                </div>
+              </div>
+            </div>
 
-        {/* panel */}
-        <Reveal delay={0.12}>
-          <div className="mt-8 grid grid-cols-1 items-stretch gap-3 lg:grid-cols-12">
-            <div className="card flex flex-col justify-center gap-4 p-8 lg:col-span-5">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={tab.id + "-text"}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.4, ease }}
-                >
-                  <h3 className="font-display text-2xl font-normal sm:text-3xl">
-                    {tab.headline}
-                  </h3>
-                  <p className="mt-3 text-soft">{tab.blurb}</p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-            <div className="card overflow-hidden lg:col-span-7">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={tab.id + "-panel"}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.45, ease }}
-                  className="h-72 sm:h-80"
-                >
-                  {tab.panel}
-                </motion.div>
-              </AnimatePresence>
+            {/* slides stage */}
+            <div className="relative h-72 sm:h-80 lg:h-[26rem]">
+              {slides.map((s, i) => (
+                <Slide
+                  key={s.id}
+                  slide={s}
+                  index={i}
+                  total={slides.length}
+                  progress={scrollYProgress}
+                />
+              ))}
             </div>
           </div>
-        </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* Mobile (<lg): scroll-jack feels bad on touch — render a simple stacked list.
+   Toggled purely by CSS: the pinned version is hidden below lg via the parent. */
+export function ShowcaseMobile() {
+  return (
+    <section className="px-6 py-24 lg:hidden">
+      <div className="mx-auto max-w-2xl">
+        <span className="eyebrow mb-4">Capabilities</span>
+        <h2 className="display text-4xl font-light">
+          See it <span className="italic text-accent">in motion</span>.
+        </h2>
+        <div className="mt-10 flex flex-col gap-4">
+          {slides.map((s, i) => (
+            <Reveal key={s.id} delay={i * 0.05}>
+              <div className="card overflow-hidden">
+                <div className="h-56">{s.panel}</div>
+                <div className="border-t border-[color:var(--hairline)] p-6">
+                  <span className="font-display text-sm text-accent">{s.n}</span>
+                  <h3 className="mt-1 font-display text-xl">{s.headline}</h3>
+                  <p className="mt-2 text-sm text-soft">{s.blurb}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

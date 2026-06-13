@@ -49,10 +49,31 @@ const config: Config = {
           "0%, 100%": { opacity: "0.4" },
           "50%": { opacity: "0.8" },
         },
+        // slow breathing/drift for the hero dawn glow
+        breathe: {
+          "0%, 100%": { transform: "translate(-50%, 0) scale(1)", opacity: "0.9" },
+          "50%": { transform: "translate(-50%, -3%) scale(1.08)", opacity: "1" },
+        },
+        "drift-a": {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "50%": { transform: "translate(24px, -18px)" },
+        },
+        "drift-b": {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "50%": { transform: "translate(-20px, 16px)" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0) rotate(var(--r, 0deg))" },
+          "50%": { transform: "translateY(-14px) rotate(var(--r, 0deg))" },
+        },
       },
       animation: {
         marquee: "marquee 40s linear infinite",
         "pulse-glow": "pulse-glow 4s ease-in-out infinite",
+        breathe: "breathe 11s ease-in-out infinite",
+        "drift-a": "drift-a 14s ease-in-out infinite",
+        "drift-b": "drift-b 17s ease-in-out infinite",
+        float: "float 8s ease-in-out infinite",
       },
     },
   },

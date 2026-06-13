@@ -41,41 +41,60 @@ export function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const y = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  // multi-speed parallax: each layer moves at a different rate for depth
+  const y = useTransform(scrollYProgress, [0, 1], [0, 160]); // content
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const glowScale = useTransform(scrollYProgress, [0, 1], [1, 1.4]);
+  const yGrid = useTransform(scrollYProgress, [0, 1], [0, 80]); // grid drifts slow
+  const yShardSlow = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const yShardFast = useTransform(scrollYProgress, [0, 1], [0, 260]);
+  const yGlow = useTransform(scrollYProgress, [0, 1], [0, -60]); // glow rises opposite
 
   return (
     <section
       ref={ref}
       className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-6"
     >
-      {/* Emerald + mint DAWN — atmospheric glow rising from lower-center (sarvam-style),
-          tuned per theme. Soft, low-chroma, depth not noise. */}
+      {/* Emerald + mint DAWN — LIVING glow. Breathes on its own + parallax-rises on scroll. */}
       <motion.div
-        style={{ scale: glowScale }}
+        style={{ scale: glowScale, y: yGlow }}
         className="pointer-events-none absolute inset-0 -z-10"
       >
-        {/* main dawn rise */}
-        <div className="absolute -bottom-32 left-1/2 h-[55rem] w-[80rem] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(0,229,160,0.22),rgba(16,184,138,0.08)_45%,transparent_70%)] blur-[40px] dark:bg-[radial-gradient(ellipse_at_center,rgba(0,229,160,0.18),rgba(16,184,138,0.06)_45%,transparent_70%)]" />
-        {/* soft side mint */}
-        <div className="absolute right-[8%] top-[22%] h-72 w-72 rounded-full bg-emerald-300/20 blur-[110px] dark:bg-emerald-400/10" />
-        <div className="absolute left-[10%] top-[30%] h-72 w-72 rounded-full bg-teal-200/30 blur-[120px] dark:bg-teal-500/10" />
+        {/* main dawn rise — slow breathing */}
+        <div className="absolute -bottom-32 left-1/2 h-[55rem] w-[80rem] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse_at_center,rgba(0,229,160,0.24),rgba(16,184,138,0.09)_45%,transparent_70%)] blur-[40px] animate-breathe dark:bg-[radial-gradient(ellipse_at_center,rgba(0,229,160,0.2),rgba(16,184,138,0.07)_45%,transparent_70%)]" />
+        {/* side mint orbs — independent slow drift */}
+        <div className="absolute right-[8%] top-[20%] h-72 w-72 rounded-full bg-emerald-300/20 blur-[110px] animate-drift-a dark:bg-emerald-400/12" />
+        <div className="absolute left-[10%] top-[32%] h-80 w-80 rounded-full bg-teal-200/30 blur-[120px] animate-drift-b dark:bg-teal-500/12" />
       </motion.div>
 
-      {/* subtle technical grid */}
-      <div
+      {/* Floating glass shards — multi-speed parallax depth (no meaningless blobs: thin glass slivers) */}
+      <motion.div style={{ y: yShardSlow }} className="pointer-events-none absolute inset-0 -z-10">
+        <div className="glass absolute left-[14%] top-[26%] h-20 w-20 rounded-2xl rotate-12 animate-float [--r:12deg]" />
+        <div className="glass absolute right-[18%] bottom-[30%] h-14 w-28 rounded-xl -rotate-6 animate-float [--r:-6deg]" style={{ animationDelay: "1.5s" }} />
+      </motion.div>
+      <motion.div style={{ y: yShardFast }} className="pointer-events-none absolute inset-0 -z-10">
+        <div className="glass absolute right-[12%] top-[30%] h-10 w-10 rounded-full animate-float" style={{ animationDelay: "0.8s" }} />
+        <div className="glass absolute left-[20%] bottom-[24%] h-12 w-12 rounded-2xl rotate-45 animate-float [--r:45deg]" style={{ animationDelay: "2.2s" }} />
+      </motion.div>
+
+      {/* subtle technical grid — slow parallax drift */}
+      <motion.div
+        style={{ y: yGrid }}
         className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--hairline) 1px, transparent 1px), linear-gradient(90deg, var(--hairline) 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          maskImage:
-            "radial-gradient(ellipse 75% 65% at 50% 40%, black 25%, transparent 72%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 75% 65% at 50% 40%, black 25%, transparent 72%)",
-        }}
-      />
+      >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(var(--hairline) 1px, transparent 1px), linear-gradient(90deg, var(--hairline) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+            maskImage:
+              "radial-gradient(ellipse 75% 65% at 50% 40%, black 25%, transparent 72%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 75% 65% at 50% 40%, black 25%, transparent 72%)",
+          }}
+        />
+      </motion.div>
 
       <motion.div style={{ y, opacity }} className="relative z-10 text-center">
         <motion.span
