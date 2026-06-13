@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Premium fonts — loaded via Next/font in layout (Geist grotesk + Fraunces serif display).
+   Banned: Inter, Roboto, Arial, Open Sans, Helvetica. */
+
+/* LIGHT = primary theme. Warm off-white, refined hairlines + layered soft shadows
+   (sarvam / devkrest clean editorial energy). */
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --surface-tint: #f4f5f3;
+  --text: #0b0d0c;
+  --text-soft: #5b655f;
+  --hairline: rgba(11, 13, 12, 0.07);
+  --hairline-strong: rgba(11, 13, 12, 0.12);
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(11, 13, 12, 0.06);
+  --shadow-soft: 0 1px 2px rgba(11, 13, 12, 0.04),
+    0 8px 24px -12px rgba(11, 13, 12, 0.1);
+  --shadow-lift: 0 2px 4px rgba(11, 13, 12, 0.05),
+    0 24px 48px -20px rgba(11, 13, 12, 0.18);
+  --grain-opacity: 0.018;
+}
+
+.dark {
+  --bg: #050505;
+  --surface: #101311;
+  --surface-2: #0a0b0a;
+  --surface-tint: #0d100e;
+  --text: #f4f6f4;
+  --text-soft: #9aa49e;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+  --glass: rgba(16, 19, 17, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 24px 48px -20px rgba(0, 0, 0, 0.7);
+  --grain-opacity: 0.04;
+}
+
+html {
+  scroll-behavior: auto; /* Lenis drives smooth scroll */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+    color 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  overflow-x: hidden;
+}
+
+/* Fixed film-grain overlay — perf-safe (fixed, pointer-events-none) */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@layer components {
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+  }
+
+  /* Double-bezel: outer machined tray (kept for dark depth) */
+  .bezel {
+    background: var(--surface-tint);
+    border: 1px solid var(--hairline);
+    padding: 0.4rem;
+    border-radius: 2rem;
+  }
+  .bezel-core {
+    background: var(--surface-2);
+    border: 1px solid var(--hairline);
+    border-radius: calc(2rem - 0.4rem);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.06);
+    height: 100%;
+  }
+
+  /* Airy card — hairline + soft shadow, lifts on hover (sarvam/devkrest look) */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-soft);
+    transition: box-shadow 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+      transform 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+      border-color 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .card-lift:hover {
+    box-shadow: var(--shadow-lift);
+    border-color: var(--hairline-strong);
+  }
+
+  .hairline {
+    border-color: var(--hairline);
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-[0.22em];
+    color: var(--text-soft);
+    border: 1px solid var(--hairline);
+  }
+}
+
+@layer utilities {
+  .text-soft {
+    color: var(--text-soft);
+  }
+  .bg-surface {
+    background: var(--surface);
+  }
+  /* Big editorial display headline */
+  .display {
+    font-family: var(--font-display), serif;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+  }
+  .accent-glow {
+    box-shadow: 0 0 80px -20px var(--tw-shadow-color, rgba(0, 229, 160, 0.35));
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+::selection {
+  background: #00e5a0;
+  color: #050505;
+}

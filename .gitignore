@@ -1,0 +1,12 @@
+node_modules
+.next
+/out
+.DS_Store
+*.log
+.env*
+*.tsbuildinfo
+next-env.d.ts
+
+# local Claude Code / design tooling — not part of the site
+.agents/
+skills-lock.json
