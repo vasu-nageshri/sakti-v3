@@ -48,7 +48,7 @@ function ServiceCard({ s, index }: { s: Service; index: number }) {
 
 export function Services() {
   return (
-    <section id="services" className="px-6 py-20 sm:py-24">
+    <section id="services" className="px-6 py-12 lg:py-0">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="What we do"

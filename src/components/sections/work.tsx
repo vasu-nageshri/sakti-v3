@@ -86,8 +86,8 @@ function MockUI({ id, tone }: { id: string; tone: string }) {
 
 export function Work() {
   return (
-    <section id="work" className="px-6 py-20 sm:py-24">
-      <div className="mx-auto max-w-6xl">
+    <section id="work" className="px-6 py-12 lg:py-0">
+      <div className="mx-auto max-w-[88rem]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHead
             eyebrow="Selected work"
@@ -103,9 +103,9 @@ export function Work() {
           </Reveal>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {projects.map((p, i) => (
-            <Reveal key={p.id} delay={(i % 2) * 0.08}>
+            <Reveal key={p.id} delay={(i % 4) * 0.06}>
               <motion.a
                 href="#contact"
                 whileHover="hover"

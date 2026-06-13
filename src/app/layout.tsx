@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SmoothScroll } from "@/components/smooth-scroll";
+// v3: Lenis smooth-scroll disabled — the horizontal engine maps native scroll to X.
 
 const sans = Geist({
   subsets: ["latin"],
@@ -36,9 +36,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${sans.variable} ${display.variable} font-sans`}
       >
-        <ThemeProvider>
-          <SmoothScroll>{children}</SmoothScroll>
-        </ThemeProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
