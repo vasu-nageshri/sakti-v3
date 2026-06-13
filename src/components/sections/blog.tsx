@@ -7,7 +7,7 @@ import { blogs } from "@/lib/site";
 
 export function Blog() {
   return (
-    <section id="blog" className="px-6 py-28 sm:py-36">
+    <section id="blog" className="px-6 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <SectionHead
           eyebrow="Writing"

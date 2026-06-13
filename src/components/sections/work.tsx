@@ -86,7 +86,7 @@ function MockUI({ id, tone }: { id: string; tone: string }) {
 
 export function Work() {
   return (
-    <section id="work" className="px-6 py-28 sm:py-36">
+    <section id="work" className="px-6 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <SectionHead

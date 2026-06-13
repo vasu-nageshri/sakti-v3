@@ -226,7 +226,7 @@ export function Showcase() {
   return (
     <section id="capabilities">
       {/* tall scroll track — height = (slides) * 100vh drives the pin duration */}
-      <div ref={ref} className="relative" style={{ height: `${slides.length * 100}vh` }}>
+      <div ref={ref} className="relative" style={{ height: `${slides.length * 75}vh` }}>
         {/* sticky stage */}
         <div className="sticky top-0 flex h-[100dvh] items-center overflow-hidden px-6">
           <div className="mx-auto w-full max-w-6xl">
@@ -275,7 +275,7 @@ export function Showcase() {
    Toggled purely by CSS: the pinned version is hidden below lg via the parent. */
 export function ShowcaseMobile() {
   return (
-    <section className="px-6 py-24 lg:hidden">
+    <section className="px-6 py-20 lg:hidden">
       <div className="mx-auto max-w-2xl">
         <span className="eyebrow mb-4">Capabilities</span>
         <h2 className="display text-4xl font-light">
