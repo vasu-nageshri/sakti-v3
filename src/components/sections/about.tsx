@@ -27,7 +27,7 @@ export function About() {
                   <span className="italic text-accent">capital</span> meet.
                 </>
               }
-              intro="Sakti pairs hands-on product engineering with real financial expertise. We don't just build the thing — we help you fund it, model it, and take it to its apex."
+              intro="ShrushtiVertex pairs hands-on product engineering with real financial expertise. We don't just build the thing — we help you fund it, model it, and take it to its apex."
             />
 
             <RevealGroup className="mt-12 grid grid-cols-3 gap-4">

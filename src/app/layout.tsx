@@ -20,9 +20,9 @@ const display = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Sakti — Transforming your vision into its ultimate apex",
+  title: "ShrushtiVertex — Transforming your vision into its ultimate apex",
   description:
-    "Sakti builds cloud, mobile, web, and AI products with agency-grade craft. Engineering and finance, one studio.",
+    "ShrushtiVertex builds cloud, mobile, web, and AI products with agency-grade craft. Engineering and finance, one studio.",
 };
 
 export default function RootLayout({

@@ -4,7 +4,7 @@
 export const SHOW_FINANCE = false;
 
 export const brand = {
-  name: "Sakti",
+  name: "ShrushtiVertex",
   tagline: "Transforming your vision into its ultimate apex",
 };
 

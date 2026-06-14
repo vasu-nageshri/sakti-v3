@@ -96,9 +96,6 @@ export function ShowcaseH() {
     <div className="flex h-full flex-col justify-center px-10 lg:px-16">
       <div className="mb-8">
         <span className="eyebrow mb-4">Capabilities</span>
-        <h2 className="display text-4xl font-light sm:text-5xl">
-          See it <span className="italic text-accent">in motion</span>.
-        </h2>
       </div>
       <div className="flex gap-4">
         {slides.map((s, i) => (

@@ -11,13 +11,25 @@ const repo =
     ? process.env.GITHUB_REPOSITORY.split("/")[1]
     : "sakti");
 
+const basePath = isProd ? `/${repo}` : "";
+
 const nextConfig = {
   reactStrictMode: true,
   output: "export", // static HTML export for GitHub Pages
-  basePath: isProd ? `/${repo}` : "",
+  basePath,
   assetPrefix: isProd ? `/${repo}/` : "",
+  // Expose the resolved basePath to client code (e.g. raw <img>/CSS mask URLs
+  // that Next does NOT auto-prefix). Mirrors basePath exactly.
+  env: { NEXT_PUBLIC_BASE_PATH: basePath },
   images: { unoptimized: true }, // no Image Optimization server on Pages
   trailingSlash: true, // Pages-friendly directory URLs
+  webpack(config) {
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ["**/node_modules/**", "**/temp/**"],
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

@@ -1,6 +1,9 @@
-# CLAUDE.md — Sakti Portfolio (v3, FINAL)
+# CLAUDE.md
 
-> Engineering + finance studio portfolio. Tagline: "Transforming your vision into its ultimate apex."
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+> Sakti Portfolio (v3, FINAL) — engineering + finance studio portfolio.
+> Tagline: "Transforming your vision into its ultimate apex."
 > Brief: premium, animated, **not** AI-generic. Refs used: devkrest.com, sarvam.ai, outpacestudios.com.
 
 ## Status
@@ -62,7 +65,11 @@ Shared: `reveal.tsx` (scroll reveals), `cta-button.tsx` (button-in-button magnet
 npm install
 npm run dev            # http://localhost:3000
 npm run build          # static export → ./out  (BASE_PATH=sakti-v3 for prod path)
+npm run lint           # next lint
 ```
+
+No test suite — verify visually in the browser. `npm start` serves the prod build but is
+moot for a static export; use the `./out` files (or `npx serve out`) to check the export.
 
 Note: after restarting dev server, warm Tailwind JIT by loading the page once (CSS compiles on first request).
 
@@ -83,3 +90,9 @@ git push v3 v3-deploy:main     # remote `v3` = github.com/vasu-nageshri/sakti-v3
 - No `Math.random()`/`Date.now()` in render (SSR/export determinism).
 - Free GitHub plan blocks Pages on private repos → repo is public.
 - Other versions for reference: sakti-v1 (classic vertical), sakti-v2 (animated vertical).
+- **Dead v2 files still in tree, NOT used by v3** — don't edit them for v3 work:
+  `src/components/smooth-scroll.tsx` (Lenis wrapper, no longer imported) and
+  `src/components/sections/showcase.tsx` (v2 pinned card-swap, replaced by `showcase-h.tsx`).
+- `next.config.mjs`: `images.unoptimized` + `trailingSlash` are required for Pages export
+  (no image-optimization server, directory-style URLs); `assetPrefix`/`basePath` only apply
+  when `NODE_ENV=production`, so dev stays at `/`.

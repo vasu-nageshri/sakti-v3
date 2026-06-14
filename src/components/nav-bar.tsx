@@ -51,8 +51,54 @@ function ThemeToggle() {
   );
 }
 
+// Which nav section is currently in view.
+// Works for both layouts: desktop = horizontal track (section is "active" when
+// its box straddles viewport center on X); mobile = vertical (straddles on Y).
+function useActiveSection() {
+  const [active, setActive] = useState<string>(nav[0].href);
+
+  useEffect(() => {
+    let raf = 0;
+    const compute = () => {
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      let current = nav[0].href;
+      for (const item of nav) {
+        const el = document.querySelector(item.href) as HTMLElement | null;
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        const hit = isDesktop
+          ? r.left <= centerX && r.right >= centerX
+          : r.top <= centerY && r.bottom >= centerY;
+        if (hit) {
+          current = item.href;
+          break;
+        }
+      }
+      setActive(current);
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return active;
+}
+
 export function NavBar() {
   const [open, setOpen] = useState(false);
+  const active = useActiveSection();
 
   // lock scroll when mobile menu open
   useEffect(() => {
@@ -65,10 +111,10 @@ export function NavBar() {
   return (
     <>
       <motion.header
-        initial={{ y: -24, opacity: 0 }}
+        initial={{ y: 24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-        className="fixed inset-x-0 top-5 z-40 flex justify-center px-4"
+        className="fixed inset-x-0 bottom-5 z-40 flex justify-center px-4"
       >
         <nav className="glass flex w-full max-w-3xl items-center justify-between rounded-full py-2 pl-5 pr-2">
           <a href="#" className="flex items-center gap-2 font-display text-lg font-medium">
@@ -77,15 +123,36 @@ export function NavBar() {
           </a>
 
           <div className="hidden items-center gap-7 md:flex">
-            {nav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-sm text-soft transition-colors duration-300 hover:text-[color:var(--text)]"
-              >
-                {item.label}
-              </a>
-            ))}
+            {nav.map((item) => {
+              const isActive = item.href === active;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "true" : undefined}
+                  className="relative flex flex-col items-center text-sm transition-colors duration-300"
+                >
+                  {/* active dot in brand primary */}
+                  <span className="absolute -top-2.5 h-1.5 w-1.5">
+                    <motion.span
+                      initial={false}
+                      animate={{ scale: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      className="block h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_8px_rgba(0,229,160,0.6)]"
+                    />
+                  </span>
+                  <span
+                    className={
+                      isActive
+                        ? "text-[color:var(--text)]"
+                        : "text-soft hover:text-[color:var(--text)]"
+                    }
+                  >
+                    {item.label}
+                  </span>
+                </a>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">

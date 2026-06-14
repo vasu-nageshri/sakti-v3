@@ -5,7 +5,6 @@ import { Hero } from "@/components/sections/hero";
 import { Trust } from "@/components/sections/trust";
 import { Marquee } from "@/components/sections/marquee";
 import { Services } from "@/components/sections/services";
-import { ShowcaseH } from "@/components/sections/showcase-h";
 import { Work } from "@/components/sections/work";
 import { About } from "@/components/sections/about";
 import { Blog } from "@/components/sections/blog";
@@ -22,7 +21,7 @@ export default function Home() {
           <Hero />
         </Panel>
 
-        <Panel width="lg:w-[55vw]">
+        <Panel width="lg:w-[95vw]">
           <div className="flex flex-col gap-10 py-16 lg:py-0">
             <Trust />
             <Marquee />
@@ -33,11 +32,7 @@ export default function Home() {
           <Services />
         </Panel>
 
-        <Panel id="capabilities" width="lg:w-[92vw]">
-          <ShowcaseH />
-        </Panel>
-
-        <Panel id="work" width="lg:w-screen">
+<Panel id="work" width="lg:w-screen">
           <Work />
         </Panel>
 
@@ -49,7 +44,7 @@ export default function Home() {
           <Blog />
         </Panel>
 
-        <Panel id="contact" width="lg:w-[92vw]">
+        <Panel id="contact" width="lg:w-screen">
           <Contact />
         </Panel>
       </HorizontalScroll>
